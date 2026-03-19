@@ -11,6 +11,10 @@ API.interceptors.request.use((req) => {
   if (token) {
     req.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // Attach the Live Server Access Key to bypass the new backend middleware
+  req.headers["X-Live-Server-Key"] = import.meta.env.VITE_LIVE_SERVER_KEY || "zenvoco-secure-key-24211a05le";
+  
   return req;
 });
 
