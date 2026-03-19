@@ -14,6 +14,8 @@ const GuidedPractice = () => {
   const navigate = useNavigate();
 
 
+  const [recordingStartTime, setRecordingStartTime] = useState(null);
+
   // ✅ START SESSION
   const startSession = async () => {
     try {
@@ -41,6 +43,8 @@ const GuidedPractice = () => {
 
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = []; // Clear previous recordings
+
+      setRecordingStartTime(Date.now()); // Record start time
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -90,11 +94,14 @@ const GuidedPractice = () => {
       }
 
       console.log("Session ID:", session_id);
+      
+      const sessionDurationSeconds = Math.round((Date.now() - recordingStartTime) / 1000) || 1;
 
       // ✅ STEP 2: Prepare form data
       const formData = new FormData();
       formData.append("audio", audioBlob);
       formData.append("session_id", session_id);
+      formData.append("duration", sessionDurationSeconds);
 
       const response = await API.post(`/practice/submit`, formData, {
         headers: {
@@ -107,7 +114,7 @@ const GuidedPractice = () => {
       console.log("Speech Analysis:", data);
 
       // ✅ STEP 3: Navigate to results
-      navigate("/results", { state: data });
+      navigate("/result", { state: data });
 
     } catch (error) {
       console.error("Upload failed:", error);

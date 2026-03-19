@@ -1,8 +1,24 @@
 import React from "react";
 import DashboardLayout from "../layout/DashboardLayout";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const SpeechResult = () => {
+  const location = useLocation();
+  const data = location.state;
+
+  if (!data) {
+    return (
+      <DashboardLayout>
+        <div className="text-white p-10 text-center">
+          <h2 className="text-2xl font-bold mb-4">No analysis data found.</h2>
+          <Link to="/practice" className="text-blue-500 hover:text-white transition-colors underline">Go Back to Practice</Link>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const aiObj = data.ai_evaluation || {};
+
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto space-y-10">
@@ -15,25 +31,25 @@ const SpeechResult = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-blue-500/50 transition-all">
             <p className="text-blue-500 text-3xl mb-2">🏆</p>
-            <p className="text-4xl font-bold text-white mb-2">78<span className="text-xl text-blue-500">%</span></p>
+            <p className="text-4xl font-bold text-white mb-2">{aiObj.confidence_score || 0}<span className="text-xl text-blue-500">%</span></p>
             <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Confidence</p>
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-green-500/50 transition-all">
             <p className="text-green-500 text-3xl mb-2">⚡</p>
-            <p className="text-4xl font-bold text-white mb-2">82<span className="text-xl text-green-500">%</span></p>
+            <p className="text-4xl font-bold text-white mb-2">{aiObj.speech_clarity || 0}<span className="text-xl text-green-500">%</span></p>
             <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Fluency</p>
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-purple-500/50 transition-all">
             <p className="text-purple-500 text-3xl mb-2">💎</p>
-            <p className="text-4xl font-bold text-white mb-2">75<span className="text-xl text-purple-500">%</span></p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Clarity</p>
+            <p className="text-4xl font-bold text-white mb-2">{aiObj.pace || 0}<span className="text-xl text-purple-500">%</span></p>
+            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Pace</p>
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-red-500/50 transition-all">
             <p className="text-red-500 text-3xl mb-2">🛑</p>
-            <p className="text-4xl font-bold text-white mb-2">5</p>
+            <p className="text-4xl font-bold text-white mb-2">{aiObj.filler_words || 0}</p>
             <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Filler Words</p>
           </div>
         </div>
@@ -47,10 +63,7 @@ const SpeechResult = () => {
             </h3>
             <div className="bg-black/40 border border-gray-800 rounded-2xl p-6 h-64 overflow-y-auto">
               <p className="text-gray-300 leading-relaxed text-lg">
-                <span className="text-white font-medium">Good morning, my name is Anil.</span> I am currently pursuing Computer Science
-                and I have strong interest in Artificial Intelligence. <span className="bg-red-500/20 text-red-300 px-1 rounded">um</span> I have worked on
-                several projects over the last year, including <span className="bg-red-500/20 text-red-300 px-1 rounded">uh</span> an application that helps students
-                practice their presentation skills.
+                {data.transcription_detected}
               </p>
             </div>
           </div>
@@ -62,24 +75,15 @@ const SpeechResult = () => {
               <span>🧠</span> AI Feedback
             </h3>
             <p className="text-xl text-white font-medium mb-6 leading-relaxed">
-              Your speech was well structured and clear. However, you used filler
-              words multiple times. Try to reduce hesitation and maintain consistent pace.
+              {aiObj.ai_feedback || "The AI didn't provide any specific comments."}
             </p>
 
             <div className="bg-black/40 border border-gray-800 rounded-2xl p-6">
-              <h4 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">Key Suggestions</h4>
+              <h4 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4">Notes</h4>
               <ul className="space-y-4 text-gray-300">
                 <li className="flex gap-3">
-                  <span className="text-purple-500">✦</span>
-                  <span>Reduce filler words like "um" and "uh".</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-purple-500">✦</span>
-                  <span>Pause confidently instead of rushing sentences.</span>
-                </li>
-                <li className="flex gap-3">
-                  <span className="text-purple-500">✦</span>
-                  <span>Maintain consistent voice modulation.</span>
+                   <span className="text-purple-500">✦</span>
+                   <span>Remember to try reducing any occurrences of filler words.</span>
                 </li>
               </ul>
             </div>

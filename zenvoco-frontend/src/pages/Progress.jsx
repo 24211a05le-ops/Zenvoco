@@ -53,7 +53,7 @@ const Progress = () => {
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 hover:-translate-y-1 transition-all hover:border-purple-500/50">
             <p className="text-gray-400 text-sm uppercase font-bold tracking-widest mb-4">Avg Duration</p>
             <p className="text-5xl font-bold text-purple-500 flex items-end gap-2">
-              -<span className="text-xl text-gray-400 mb-1">m</span> -<span className="text-xl text-gray-400 mb-1">s</span>
+              {progressData.avg_duration ? Math.floor(progressData.avg_duration / 60) : 0}<span className="text-xl text-gray-400 mb-1">m</span> {progressData.avg_duration ? progressData.avg_duration % 60 : 0}<span className="text-xl text-gray-400 mb-1">s</span>
             </p>
           </div>
         </div>
@@ -116,7 +116,7 @@ const Progress = () => {
                       <td className="py-5 font-medium">{new Date(session.date).toLocaleDateString()}</td>
                       <td>Practice Session</td>
                       <td className="text-blue-400 font-bold">{session.confidence_score}%</td>
-                      <td>-</td>
+                      <td className="text-purple-400 font-medium">{session.duration ? `${Math.floor(session.duration/60)}m ${session.duration%60}s` : "-"}</td>
                       <td className="text-right"><button className="text-blue-500 hover:text-white transition-colors">Review</button></td>
                     </tr>
                   ))

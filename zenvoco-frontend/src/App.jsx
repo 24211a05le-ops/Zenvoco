@@ -13,7 +13,7 @@ import ListenMode from "./pages/ListenMode";
 import DailyTask from "./pages/DailyTask";
 import VivaSimulation from "./pages/VivaSimulation";
 import DailyCheckIn from "./pages/DailyCheckIn";
-import Results from "./pages/Results";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -30,14 +30,12 @@ function App() {
       <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       
-      {/* Other routes (might need protection later, keeping as is for now) */}
-      <Route path="/result" element={<SpeechResult />} />
-      <Route path="/learn" element={<LearnMode />} />
-      <Route path="/listen" element={<ListenMode />} />
-      <Route path="/daily-task" element={<DailyTask />} />
-      <Route path="/viva" element={<VivaSimulation />} />
-      <Route path="/checkin" element={<DailyCheckIn />} />
-      <Route path="/results" element={<Results />} />
+      <Route path="/result" element={<ProtectedRoute><SpeechResult /></ProtectedRoute>} />
+      <Route path="/learn" element={<ProtectedRoute><LearnMode /></ProtectedRoute>} />
+      <Route path="/listen" element={<ProtectedRoute><ListenMode /></ProtectedRoute>} />
+      <Route path="/daily-task" element={<ProtectedRoute><DailyTask /></ProtectedRoute>} />
+      <Route path="/viva" element={<ProtectedRoute><VivaSimulation /></ProtectedRoute>} />
+      <Route path="/checkin" element={<ProtectedRoute><DailyCheckIn /></ProtectedRoute>} />
     </Routes>
   );
 }
