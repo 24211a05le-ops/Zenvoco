@@ -1,0 +1,88 @@
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from auth.jwt_handler import get_current_user_id
+from database import practice_collection, speech_collection, progress_collection
+from models.schemas import PracticeSessionStartRequest
+from services.speech_service import process_audio_transcription, process_generative_feedback
+from datetime import datetime
+from bson import ObjectId
+import os
+import shutil
+
+router = APIRouter(prefix="/practice", tags=["Practice Module"])
+
+@router.post("/start")
+async def start_practice_session(
+    payload: PracticeSessionStartRequest, 
+    user_id: str = Depends(get_current_user_id)
+):
+    """
+    Establishes a new database record marking the initiation of an active Practice Session.
+    """
+    new_session = {
+        "user_id": user_id,
+        "topic": payload.topic,
+        "created_at": datetime.utcnow()
+    }
+    result = await practice_collection.insert_one(new_session)
+    return {
+        "message": "Practice tracking launched", 
+        "session_id": str(result.inserted_id)
+    }
+
+@router.post("/upload")
+async def upload_speech_audio(
+    session_id: str = Form(...), 
+    audio: UploadFile = File(...), 
+    user_id: str = Depends(get_current_user_id)
+):
+    """
+    Attaches media payload directly to an active Practice Session.
+    Initiates external service Whisper Inference mappings, and GenAI Coaching logic sequentially.
+    """
+    # Verify exact Session binding validity
+    session = await practice_collection.find_one({"_id": ObjectId(session_id), "user_id": user_id})
+    if not session:
+        raise HTTPException(status_code=404, detail="Active sequence missing.")
+        
+    # Process Payload File safely to IO disk limits (Ideally map to S3 long term)
+    os.makedirs("uploads", exist_ok=True)
+    temp_media_path = f"uploads/{session_id}_{audio.filename}"
+    with open(temp_media_path, "wb") as buff:
+        shutil.copyfileobj(audio.file, buff)
+        
+    # Kickoff Analytics Engines Pipelines
+    transcription = await process_audio_transcription(temp_media_path)
+    analysis_data = await process_generative_feedback(transcription)
+    
+    # Mirror results inside Main Session Collection History
+    update_data = {
+        "audio_file": temp_media_path,
+        "transcription": transcription,
+        "ai_feedback": analysis_data.get("ai_feedback"),
+        "confidence_score": analysis_data.get("confidence_score")
+    }
+    await practice_collection.update_one({"_id": ObjectId(session_id)}, {"$set": update_data})
+    
+    # Store analytical factors inside distinct isolated Collection
+    granular_entry = {
+        "session_id": session_id,
+        "speech_clarity": analysis_data.get("speech_clarity"),
+        "filler_words": analysis_data.get("filler_words"),
+        "pace": analysis_data.get("pace"),
+        "grammar_score": analysis_data.get("grammar_score"),
+        "confidence_score": analysis_data.get("confidence_score")
+    }
+    await speech_collection.insert_one(granular_entry)
+    
+    # Force generic Confidence mapping curve increment to users global Progress chart.
+    await progress_collection.insert_one({
+        "user_id": user_id,
+        "confidence_score": analysis_data.get("confidence_score"),
+        "date": datetime.utcnow()
+    })
+    
+    return {
+        "status": "Inference Complete",
+        "transcription_detected": transcription,
+        "ai_evaluation": analysis_data
+    }
