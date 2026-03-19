@@ -32,6 +32,7 @@ async def start_practice_session(
 @router.post("/submit")
 async def upload_speech_audio(
     session_id: str = Form(...), 
+    duration: int = Form(0),
     audio: UploadFile = File(...), 
     user_id: str = Depends(get_current_user_id)
 ):
@@ -62,7 +63,8 @@ async def upload_speech_audio(
         "audio_file": temp_media_path,
         "transcription": transcription,
         "ai_feedback": ai_eval.get("ai_feedback"),
-        "confidence_score": ai_eval.get("confidence_score")
+        "confidence_score": ai_eval.get("confidence_score"),
+        "duration": duration
     }
     await practice_collection.update_one({"_id": ObjectId(session_id)}, {"$set": update_data})
     
@@ -81,6 +83,7 @@ async def upload_speech_audio(
     await progress_collection.insert_one({
         "user_id": user_id,
         "confidence_score": ai_eval.get("confidence_score"),
+        "duration": duration,
         "date": datetime.utcnow()
     })
     

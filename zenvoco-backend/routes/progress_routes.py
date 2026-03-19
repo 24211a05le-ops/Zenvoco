@@ -33,17 +33,25 @@ async def retrieve_analytics_timeline(user_id: str = Depends(get_current_user_id
     timeline = [
         {
             "date": record.get("date"),
-            "confidence_score": record.get("confidence_score", 0)
+            "confidence_score": record.get("confidence_score", 0),
+            "duration": record.get("duration", 0)
         }
         for record in records
     ]
 
     # 5️⃣ Latest confidence score
     latest_score = timeline[-1]["confidence_score"] if timeline else 0
+    
+    # 6️⃣ Calculate Average Duration
+    avg_duration = 0
+    if timeline:
+        total_duration = sum(t.get("duration", 0) for t in timeline)
+        avg_duration = total_duration // len(timeline)
 
     return {
         "user_id": user_id,
         "total_sessions": len(timeline),
         "latest_confidence_score": latest_score,
+        "avg_duration": avg_duration,
         "timeline_metrics": timeline
     }
