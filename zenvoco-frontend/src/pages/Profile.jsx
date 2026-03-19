@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layout/DashboardLayout";
+import API from "../api/api";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -9,18 +10,8 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://zenvoco.onrender.com");
-
-        const response = await fetch(`${API_BASE_URL}/user/profile`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
-        });
-
-        const data = await response.json();
+        const response = await API.get(`/user/profile`);
+        const data = response.data;
         console.log("Profile API Response:", data);
 
         setProfile(data);

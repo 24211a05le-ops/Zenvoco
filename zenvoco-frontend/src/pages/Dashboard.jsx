@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../layout/DashboardLayout";
 import { Link } from "react-router-dom";
+import API from "../api/api";
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -8,18 +9,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://zenvoco.onrender.com");
-
-        const response = await fetch(`${API_BASE_URL}/dashboard/user`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
+        const response = await API.get(`/dashboard/user`);
+        const data = response.data;
         console.log("Dashboard API Response:", data);
 
         setDashboardData(data);

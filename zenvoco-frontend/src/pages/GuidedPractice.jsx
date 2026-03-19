@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layout/DashboardLayout";
-import axios from "axios";
+import API from "../api/api";
 
 const GuidedPractice = () => {
 
@@ -13,24 +13,13 @@ const GuidedPractice = () => {
 
   const navigate = useNavigate();
 
-  // ✅ API BASE URL (GLOBAL)
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL ||
-    (import.meta.env.DEV
-      ? "http://127.0.0.1:8000"
-      : "https://zenvoco.onrender.com");
 
   // ✅ START SESSION
   const startSession = async () => {
     try {
-      const res = await axios.post(
-        `${API_BASE_URL}/practice/start`,
-        { topic: "Describe a challenging situation you faced and how you handled it." },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        }
+      const res = await API.post(
+        `/practice/start`,
+        { topic: "Describe a challenging situation you faced and how you handled it." }
       );
 
       console.log("Start session response:", res.data);
@@ -107,15 +96,13 @@ const GuidedPractice = () => {
       formData.append("audio", audioBlob);
       formData.append("session_id", session_id);
 
-      const response = await fetch(`${API_BASE_URL}/practice/upload`, {
-        method: "POST",
+      const response = await API.post(`/practice/submit`, formData, {
         headers: {
-          Authorization: `Bearer ${token}`
-        },
-        body: formData
+          "Content-Type": "multipart/form-data"
+        }
       });
 
-      const data = await response.json();
+      const data = response.data;
 
       console.log("Speech Analysis:", data);
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../layout/DashboardLayout";
+import API from "../api/api";
 
 const Progress = () => {
   const [progressData, setProgressData] = useState(null);
@@ -7,18 +8,8 @@ const Progress = () => {
   useEffect(() => {
     const fetchProgress = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://zenvoco.onrender.com");
-
-        const response = await fetch(`${API_BASE_URL}/progress/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
+        const response = await API.get(`/progress/`);
+        const data = response.data;
         console.log("Progress API Response:", data);
         setProgressData(data);
       } catch (error) {
