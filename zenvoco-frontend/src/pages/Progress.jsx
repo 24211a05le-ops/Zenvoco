@@ -1,7 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DashboardLayout from "../layout/DashboardLayout";
 
 const Progress = () => {
+  const [progressData, setProgressData] = useState(null);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8000" : "https://zenvoco.onrender.com");
+
+        const response = await fetch(`${API_BASE_URL}/progress/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        console.log("Progress API Response:", data);
+        setProgressData(data);
+      } catch (error) {
+        console.error("Error fetching progress:", error);
+      }
+    };
+
+    fetchProgress();
+  }, []);
+
+  if (!progressData) {
+    return (
+      <DashboardLayout>
+        <div className="text-white p-10">Loading progress...</div>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-10">
@@ -13,21 +48,21 @@ const Progress = () => {
         {/* Summary Cards */}
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 hover:-translate-y-1 transition-all hover:border-blue-500/50">
-            <p className="text-gray-400 text-sm uppercase font-bold tracking-widest mb-4">Average Confidence</p>
+            <p className="text-gray-400 text-sm uppercase font-bold tracking-widest mb-4">Latest Confidence</p>
             <p className="text-5xl font-bold text-blue-500 flex items-center gap-2">
-              72<span className="text-2xl">%</span>
+              {progressData.latest_confidence_score || 0}<span className="text-2xl">%</span>
             </p>
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 hover:-translate-y-1 transition-all hover:border-green-500/50">
             <p className="text-gray-400 text-sm uppercase font-bold tracking-widest mb-4">Total Sessions</p>
-            <p className="text-5xl font-bold text-green-500">12</p>
+            <p className="text-5xl font-bold text-green-500">{progressData.total_sessions || 0}</p>
           </div>
 
           <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 hover:-translate-y-1 transition-all hover:border-purple-500/50">
             <p className="text-gray-400 text-sm uppercase font-bold tracking-widest mb-4">Avg Duration</p>
             <p className="text-5xl font-bold text-purple-500 flex items-end gap-2">
-              1<span className="text-xl text-gray-400 mb-1">m</span> 45<span className="text-xl text-gray-400 mb-1">s</span>
+              -<span className="text-xl text-gray-400 mb-1">m</span> -<span className="text-xl text-gray-400 mb-1">s</span>
             </p>
           </div>
         </div>
@@ -45,21 +80,23 @@ const Progress = () => {
             <div className="absolute top-1/4 left-4 right-4 border-b border-gray-800/50 border-dashed"></div>
             <div className="absolute top-3/4 left-4 right-4 border-b border-gray-800/50 border-dashed"></div>
 
-            <div className="relative z-10 w-full h-full flex items-end justify-between px-2">
+            <div className="relative z-10 w-full h-full flex items-end justify-between px-2 gap-2">
               {/* Bars */}
-              <div className="w-[10%] bg-blue-600/30 hover:bg-blue-600/50 transition-all rounded-t-xl border-t-2 border-blue-500 h-[40%] flex justify-center group relative cursor-pointer"><span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">60%</span></div>
-              <div className="w-[10%] bg-blue-600/40 hover:bg-blue-600/60 transition-all rounded-t-xl border-t-2 border-blue-500 h-[45%] flex justify-center group relative cursor-pointer"><span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">65%</span></div>
-              <div className="w-[10%] bg-blue-600/50 hover:bg-blue-600/70 transition-all rounded-t-xl border-t-2 border-blue-400 h-[55%] flex justify-center group relative cursor-pointer"><span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">70%</span></div>
-              <div className="w-[10%] bg-blue-600/70 hover:bg-blue-600/90 transition-all rounded-t-xl border-t-2 border-blue-400 h-[70%] flex justify-center group relative cursor-pointer"><span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">75%</span></div>
-              <div className="w-[10%] bg-blue-500 hover:bg-blue-400 transition-all rounded-t-xl border-t-4 border-blue-300 shadow-[0_0_20px_rgba(59,130,246,0.5)] h-[78%] flex justify-center group relative cursor-pointer"><span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">78%</span></div>
+              {progressData.timeline_metrics && progressData.timeline_metrics.length > 0 ? (
+                progressData.timeline_metrics.slice(-10).map((m, i) => (
+                  <div key={i} className="flex-1 bg-blue-600/50 hover:bg-blue-600/70 transition-all rounded-t-xl border-t-2 border-blue-400 flex justify-center group relative cursor-pointer" style={{ height: `${m.confidence_score || 10}%` }}>
+                    <span className="opacity-0 group-hover:opacity-100 absolute -top-8 bg-black text-white px-2 py-1 rounded text-xs transition-opacity">{m.confidence_score || 0}%</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center w-full pb-10">No sessions recorded yet</p>
+              )}
             </div>
 
             <div className="flex justify-between w-full text-sm text-gray-500 font-medium px-2 mt-2">
-              <span>Day 1</span>
-              <span>Day 2</span>
-              <span>Day 3</span>
-              <span>Day 4</span>
-              <span className="text-blue-400 font-bold">Day 5</span>
+              {progressData.timeline_metrics && progressData.timeline_metrics.length > 0 && progressData.timeline_metrics.slice(-5).map((m, i) => (
+                <span key={i}>{new Date(m.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+              ))}
             </div>
           </div>
         </div>
@@ -82,27 +119,21 @@ const Progress = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-300">
-                <tr className="border-b border-gray-800/50 hover:bg-black/20 transition-colors">
-                  <td className="py-5 font-medium">Mar 1</td>
-                  <td>Self Introduction</td>
-                  <td className="text-blue-400 font-bold">75%</td>
-                  <td>1m 30s</td>
-                  <td className="text-right"><button className="text-blue-500 hover:text-white transition-colors">Review</button></td>
-                </tr>
-                <tr className="border-b border-gray-800/50 hover:bg-black/20 transition-colors">
-                  <td className="py-5 font-medium">Mar 2</td>
-                  <td>Interview Question</td>
-                  <td className="text-blue-400 font-bold">70%</td>
-                  <td>2m 10s</td>
-                  <td className="text-right"><button className="text-blue-500 hover:text-white transition-colors">Review</button></td>
-                </tr>
-                <tr className="hover:bg-black/20 transition-colors">
-                  <td className="py-5 font-medium">Mar 3</td>
-                  <td>Presentation Topic</td>
-                  <td className="text-blue-400 font-bold">78%</td>
-                  <td>1m 45s</td>
-                  <td className="text-right"><button className="text-blue-500 hover:text-white transition-colors">Review</button></td>
-                </tr>
+                {progressData.timeline_metrics && progressData.timeline_metrics.length > 0 ? (
+                  progressData.timeline_metrics.slice().reverse().map((session, i) => (
+                    <tr key={i} className="border-b border-gray-800/50 hover:bg-black/20 transition-colors">
+                      <td className="py-5 font-medium">{new Date(session.date).toLocaleDateString()}</td>
+                      <td>Practice Session</td>
+                      <td className="text-blue-400 font-bold">{session.confidence_score}%</td>
+                      <td>-</td>
+                      <td className="text-right"><button className="text-blue-500 hover:text-white transition-colors">Review</button></td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-5 text-center text-gray-500">No practice history available.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

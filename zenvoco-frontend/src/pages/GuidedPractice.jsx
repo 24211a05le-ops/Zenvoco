@@ -13,16 +13,30 @@ const GuidedPractice = () => {
 
   const navigate = useNavigate();
 
-  // ✅ START SESSION API
+  // ✅ API BASE URL (GLOBAL)
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL ||
+    (import.meta.env.DEV
+      ? "http://127.0.0.1:8000"
+      : "https://zenvoco.onrender.com");
+
+  // ✅ START SESSION
   const startSession = async () => {
     try {
-      const res = await axios.post("/practice/start", {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`
+      const res = await axios.post(
+        `${API_BASE_URL}/practice/start`,
+        { topic: "Describe a challenging situation you faced and how you handled it." },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         }
-      });
+      );
+
+      console.log("Start session response:", res.data);
 
       return res.data.session_id;
+
     } catch (err) {
       console.error("Error starting session", err);
     }
@@ -37,6 +51,7 @@ const GuidedPractice = () => {
       const mediaRecorder = new MediaRecorder(stream);
 
       mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = []; // Clear previous recordings
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -70,7 +85,7 @@ const GuidedPractice = () => {
     setRecording(false);
   };
 
-  // 🚀 UPLOAD AUDIO (FIXED)
+  // 🚀 UPLOAD AUDIO (FINAL FIXED)
   const uploadAudio = async () => {
     try {
       console.log("Uploading audio...");
@@ -79,18 +94,18 @@ const GuidedPractice = () => {
 
       // ✅ STEP 1: Start session
       const session_id = await startSession();
+
+      if (!session_id) {
+        console.error("Session ID not received");
+        return;
+      }
+
       console.log("Session ID:", session_id);
 
-      // ✅ STEP 2: Prepare correct form data
+      // ✅ STEP 2: Prepare form data
       const formData = new FormData();
-      formData.append("audio", audioBlob);   // FIXED
-      formData.append("session_id", session_id); // REQUIRED
-
-      const API_BASE_URL =
-        import.meta.env.VITE_API_URL ||
-        (import.meta.env.DEV
-          ? "http://127.0.0.1:8000"
-          : "https://zenvoco.onrender.com");
+      formData.append("audio", audioBlob);
+      formData.append("session_id", session_id);
 
       const response = await fetch(`${API_BASE_URL}/practice/upload`, {
         method: "POST",
@@ -104,7 +119,7 @@ const GuidedPractice = () => {
 
       console.log("Speech Analysis:", data);
 
-      // ✅ STEP 3: Navigate to results page
+      // ✅ STEP 3: Navigate to results
       navigate("/results", { state: data });
 
     } catch (error) {
@@ -125,7 +140,7 @@ const GuidedPractice = () => {
           </p>
         </div>
 
-        {/* Topic Card */}
+        {/* Topic */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-10">
           <h3 className="text-2xl font-bold mb-4 text-purple-400">
             📝 Today’s Topic
@@ -135,7 +150,7 @@ const GuidedPractice = () => {
           </p>
         </div>
 
-        {/* Recording Section */}
+        {/* Recorder */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-16 text-center">
 
           <p className="text-xl text-gray-300 mb-10">
@@ -144,7 +159,7 @@ const GuidedPractice = () => {
               : "Ready when you are. Click microphone to start."}
           </p>
 
-          {/* MIC BUTTON */}
+          {/* MIC */}
           <div className="flex justify-center mb-10">
             <button
               onClick={recording ? stopRecording : startRecording}
@@ -158,7 +173,7 @@ const GuidedPractice = () => {
             </button>
           </div>
 
-          {/* ACTION BUTTONS */}
+          {/* Buttons */}
           <div className="flex justify-center gap-6 mt-12">
 
             <button

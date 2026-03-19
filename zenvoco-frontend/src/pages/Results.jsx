@@ -20,21 +20,21 @@ const Results = () => {
 
           <div className="bg-gray-900 p-6 rounded-xl text-center">
             <p className="text-3xl font-bold text-blue-400">
-              {data.confidence_score}%
+              {data.ai_evaluation?.confidence_score || 0}%
             </p>
             <p className="text-gray-400">Confidence</p>
           </div>
 
           <div className="bg-gray-900 p-6 rounded-xl text-center">
             <p className="text-3xl font-bold text-green-400">
-              {data.fluency}%
+              {data.ai_evaluation?.speech_clarity || 0}%
             </p>
             <p className="text-gray-400">Fluency</p>
           </div>
 
           <div className="bg-gray-900 p-6 rounded-xl text-center">
             <p className="text-3xl font-bold text-purple-400">
-              {data.speech_rate}
+              {data.ai_evaluation?.pace || "Normal"}
             </p>
             <p className="text-gray-400">Speech Rate</p>
           </div>
@@ -43,7 +43,7 @@ const Results = () => {
 
         <div className="bg-gray-900 p-6 rounded-xl">
           <h3 className="text-xl font-bold mb-3">AI Feedback</h3>
-          <p className="text-gray-300">{data.feedback}</p>
+          <p className="text-gray-300">{data.ai_evaluation?.ai_feedback || "No feedback available."}</p>
         </div>
 
         <Link
