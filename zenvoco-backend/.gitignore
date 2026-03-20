@@ -15,3 +15,11 @@ venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Test files — never commit these
+test_*.py
+test_*.txt
+*_test.py
+
+# Uploaded audio files — temp files only
+uploads/
