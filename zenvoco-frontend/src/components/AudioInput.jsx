@@ -231,7 +231,7 @@ const AudioInput = ({ onAudioReady, onReset, disabled = false, compact = false }
           <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
             <div className="flex items-center gap-6">
               <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-xl ring-4 ring-blue-500/20">
-                <Icon path={<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>} />
+                <Icon path={<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></>} />
               </div>
               <div className="text-left">
                 <p className="text-blue-400 font-black text-xs uppercase tracking-[0.2em] mb-1">Status: Ready</p>
