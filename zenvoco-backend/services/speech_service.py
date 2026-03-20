@@ -1,22 +1,32 @@
-from openai import AsyncOpenAI
+import whisper
+import google.generativeai as genai
 from config.settings import settings
 import json
 import re
+import os
+import asyncio
 
-# Initialize OpenAI client
-client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+# ─── LLM CONFIG (Gemini) ──────────────────────────────────────────────────────
+genai.configure(api_key=settings.GEMINI_API_KEY)
+# We use gemini-flash-latest for stable free-tier access
+gemini_model = genai.GenerativeModel('gemini-flash-latest')
+
+# ─── LOCAL AUDIO CONFIG (Whisper) ─────────────────────────────────────────────
+# We load the "base" model - it's a good trade-off between speed and accuracy
+# Loads into CPU/RAM (approx 150MB)
+print("Loading Local Whisper (base)...")
+whisper_model = whisper.load_model("base")
 
 FILLER_WORD_PATTERN = re.compile(
     r"\b(um|uh|like|you know|basically|actually|literally|so)\b",
     re.IGNORECASE,
 )
 
-
 def _clamp(value: float, low: int = 0, high: int = 100) -> int:
     return max(low, min(high, int(round(value))))
 
-
 def _build_local_feedback(transcription: str, reason: str | None = None) -> dict:
+    """Fallback logic if LLM fails"""
     text = (transcription or "").strip()
     words = re.findall(r"\b[\w']+\b", text)
     sentences = [part.strip() for part in re.split(r"[.!?]+", text) if part.strip()]
@@ -34,7 +44,7 @@ def _build_local_feedback(transcription: str, reason: str | None = None) -> dict
     if not text or text == "Audio transcription failed.":
         return {
             "ai_evaluation": {
-                "ai_feedback": "We could not extract enough speech content to coach this response. Please retry with a clearer recording and check microphone input.",
+                "ai_feedback": "We could not extract enough speech content to coach this response. Please retry with a clearer recording.",
                 "speech_clarity": 0,
                 "filler_words": 0,
                 "pace": 0,
@@ -45,94 +55,84 @@ def _build_local_feedback(transcription: str, reason: str | None = None) -> dict
             }
         }
 
-    feedback_parts = []
-    if filler_words >= 4:
-        feedback_parts.append("Your ideas are coming through, but filler words are reducing fluency. Pause briefly instead of using words like 'um' or 'like'.")
-    else:
-        feedback_parts.append("Your response is fairly clear and easy to follow. Keep the same structure and make your key points slightly more deliberate.")
-
-    if confidence_score < 70:
-        feedback_parts.append("Project more confidence by slowing down at the start of each sentence and ending statements cleanly.")
-    elif grammar_score < 75:
-        feedback_parts.append("Tighten a few sentence transitions so the delivery sounds more polished and professional.")
-    else:
-        feedback_parts.append("Your delivery sounds reasonably confident. A bit more energy and sharper phrasing will make it more persuasive.")
-
     return {
         "ai_evaluation": {
-            "ai_feedback": " ".join(feedback_parts),
+            "ai_feedback": "Your response is fairly clear. Focus on reducing filler words and speaking with more deliberate pauses to improve confidence.",
             "speech_clarity": speech_clarity,
             "filler_words": filler_words,
             "pace": pace,
             "grammar_score": grammar_score,
             "confidence_score": confidence_score,
             "feedback_source": "local_fallback",
-            "fallback_reason": reason or "openai_unavailable",
+            "fallback_reason": reason or "llm_unavailable",
         }
     }
 
-
-# AUDIO -> TEXT (WHISPER)
+# STEP 1: AUDIO -> TEXT (Local Whisper)
 async def process_audio_transcription(file_path: str) -> str:
-    if not settings.OPENAI_API_KEY:
-        return "This is a mock transcription for testing."
+    """Uses Local Whisper 'base' model to transcribe audio files"""
+    if not os.path.exists(file_path):
+        return "Audio file not found."
 
     try:
-        with open(file_path, "rb") as audio_file:
-            transcript = await client.audio.transcriptions.create(
-                model="whisper-1",
-                file=audio_file
-            )
-
-        print("Transcription:", transcript.text)
-        return transcript.text
+        # whisper.transcribe is a blocking call, we run it in a thread to keep FastAPI responsive
+        print(f"Transcribing {file_path} locally...")
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(None, lambda: whisper_model.transcribe(file_path))
+        
+        text = result.get("text", "").strip()
+        print(f"Transcription Result: {text}")
+        return text if text else "No speech detected."
 
     except Exception as e:
-        print(f"Whisper error: {e}")
+        print(f"Local Whisper Error: {e}")
         return "Audio transcription failed."
 
-
-# TEXT -> AI FEEDBACK
+# STEP 2: TEXT -> AI FEEDBACK (Google Gemini)
 async def process_generative_feedback(transcription: str) -> dict:
-    if not settings.OPENAI_API_KEY:
-        return _build_local_feedback(transcription, reason="missing_api_key")
+    """Uses Google Gemini API to generate structured coaching feedback"""
+    if not settings.GEMINI_API_KEY:
+        print("Gemini API Key missing, using local fallback.")
+        return _build_local_feedback(transcription, reason="missing_gemini_key")
 
     prompt = f"""
-    Analyze the following speech from a student:
+    You are an expert English communication coach.
+    Analyze the following student's speech transcription:
+    "{transcription}"
 
-    \"{transcription}\"
-
-    Return ONLY a JSON object with:
-    - ai_feedback (2 short coaching sentences)
-    - speech_clarity (0-100)
-    - filler_words (count)
-    - pace (0-100)
-    - grammar_score (0-100)
-    - confidence_score (0-100)
+    Evaluate based on confidence, fluency, and professional impact.
+    
+    Return ONLY a JSON object with these fields:
+    - ai_feedback: (string, exactly two short coaching sentences)
+    - speech_clarity: (int 0-100)
+    - filler_words: (int, count of words like 'um', 'uh', 'like', 'you know')
+    - pace: (int 0-100, where 50 is ideal)
+    - grammar_score: (int 0-100)
+    - confidence_score: (int 0-100)
     """
 
     try:
-        response = await client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are an expert communication coach."},
-                {"role": "user", "content": prompt}
-            ],
-            response_format={"type": "json_object"}
-        )
+        # Gemini does not support response_format="json" like OpenAI yet in some SDK versions, 
+        # so we rely on explicit prompt and simple parsing
+        response = await asyncio.to_thread(lambda: gemini_model.generate_content(prompt))
+        
+        content = response.text.strip()
+        # Remove any markdown code blocks if the AI included them
+        if content.startswith("```json"):
+            content = content[7:-3].strip()
+        elif content.startswith("```"):
+            content = content[3:-3].strip()
 
-        content = response.choices[0].message.content or "{}"
         data = json.loads(content)
-
-        print("AI Evaluation:", data)
+        print("Gemini Evaluation:", data)
 
         return {
             "ai_evaluation": {
                 **data,
-                "feedback_source": "openai"
+                "feedback_source": "gemini"
             }
         }
 
     except Exception as e:
-        print("AI error:", e)
+        print(f"Gemini API Error: {e}")
         return _build_local_feedback(transcription, reason=str(e))

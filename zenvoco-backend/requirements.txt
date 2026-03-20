@@ -1,10 +1,13 @@
 fastapi
 uvicorn
 motor
-pymongo
-pydantic[email]
-python-jose[cryptography]
+python-dotenv
+python-jose
+passlib
 bcrypt
 python-multipart
 openai
-python-dotenv
+google-generativeai
+openai-whisper
+librosa
+numpy
