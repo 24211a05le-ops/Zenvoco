@@ -18,14 +18,22 @@ const Profile = () => {
 
       } catch (error) {
         console.error("Error fetching profile:", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [navigate]);
 
   if (!profile) {
-    return <div className="text-white p-10">Loading profile...</div>;
+    return (
+      <DashboardLayout>
+        <div className="text-white p-10">Loading profile...</div>
+      </DashboardLayout>
+    );
   }
 
   return (

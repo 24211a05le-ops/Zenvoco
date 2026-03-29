@@ -3,6 +3,8 @@ import { useState } from "react";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const token = localStorage.getItem("token");
+  const isAuthenticated = token && token !== "undefined" && token !== "null";
 
   return (
     <nav className="bg-black border-b border-gray-800 px-6 md:px-12 py-4 flex justify-between items-center text-white fixed top-0 left-0 w-full z-50">
@@ -22,7 +24,7 @@ function Navbar() {
         <a href="#about" className="text-gray-300 hover:text-white transition">
           About
         </a>
-        {localStorage.getItem("token") ? (
+        {isAuthenticated ? (
           <Link
             to="/dashboard"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -58,7 +60,7 @@ function Navbar() {
           <a href="#home" onClick={() => setMenuOpen(false)} className="block text-gray-300 hover:text-white transition">Home</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)} className="block text-gray-300 hover:text-white transition">How It Works</a>
           <a href="#about" onClick={() => setMenuOpen(false)} className="block text-gray-300 hover:text-white transition">About</a>
-          {localStorage.getItem("token") ? (
+          {isAuthenticated ? (
             <Link
               to="/dashboard"
               onClick={() => setMenuOpen(false)}

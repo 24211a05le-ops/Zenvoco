@@ -8,7 +8,8 @@ function Login() {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    const token = localStorage.getItem("token");
+    if (token && token !== "undefined" && token !== "null") {
       navigate("/dashboard", { replace: true });
     }
   }, [navigate]);

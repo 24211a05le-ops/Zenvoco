@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../layout/DashboardLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import API from "../api/api";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
@@ -16,14 +17,22 @@ const Dashboard = () => {
         setDashboardData(data);
       } catch (error) {
         console.error("Error fetching dashboard:", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
       }
     };
 
     fetchDashboard();
-  }, []);
+  }, [navigate]);
 
   if (!dashboardData) {
-    return <div className="text-white p-10">Loading dashboard...</div>;
+    return (
+      <DashboardLayout>
+        <div className="text-white p-10">Loading dashboard...</div>
+      </DashboardLayout>
+    );
   }
 
   return (

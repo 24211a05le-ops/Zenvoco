@@ -33,7 +33,7 @@ function Welcome() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-5 items-center w-full sm:w-auto px-6">
-              {localStorage.getItem("token") ? (
+              {(localStorage.getItem("token") && localStorage.getItem("token") !== "undefined" && localStorage.getItem("token") !== "null") ? (
                 <Link
                   to="/dashboard"
                   className="w-full sm:w-auto bg-blue-600 text-white px-10 py-5 rounded-xl font-bold text-lg hover:bg-blue-500 transition-all duration-300 transform hover:-translate-y-1"

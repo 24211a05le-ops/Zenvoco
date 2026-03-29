@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../layout/DashboardLayout";
 import API from "../api/api";
 
 const Progress = () => {
+  const navigate = useNavigate();
   const [progressData, setProgressData] = useState(null);
 
   useEffect(() => {
@@ -14,11 +16,15 @@ const Progress = () => {
         setProgressData(data);
       } catch (error) {
         console.error("Error fetching progress:", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
+        }
       }
     };
 
     fetchProgress();
-  }, []);
+  }, [navigate]);
 
   if (!progressData) {
     return (
