@@ -28,35 +28,53 @@ const SpeechResult = () => {
         </div>
 
         {/* Score Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-blue-500/50 transition-all">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-blue-500/50 transition-all">
             <p className="text-blue-500 text-3xl mb-2">🏆</p>
-            <p className="text-4xl font-bold text-white mb-2">{aiObj.confidence_score || 0}<span className="text-xl text-blue-500">%</span></p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Confidence</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.confidence_score ?? 0}<span className="text-xl text-blue-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Confidence Index</p>
           </div>
 
-          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-green-500/50 transition-all">
-            <p className="text-green-500 text-3xl mb-2">⚡</p>
-            <p className="text-4xl font-bold text-white mb-2">{aiObj.speech_clarity || 0}<span className="text-xl text-green-500">%</span></p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Fluency</p>
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-green-500/50 transition-all">
+            <p className="text-green-500 text-3xl mb-2">🌊</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.speech_clarity ?? 0}<span className="text-xl text-green-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Fluency (F)</p>
           </div>
 
-          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-purple-500/50 transition-all">
-            <p className="text-purple-500 text-3xl mb-2">💎</p>
-            <p className="text-4xl font-bold text-white mb-2">{aiObj.pace || 0}<span className="text-xl text-purple-500">%</span></p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Pace</p>
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-indigo-500/50 transition-all">
+            <p className="text-indigo-500 text-3xl mb-2">🗣️</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.pronunciation_score ?? 0}<span className="text-xl text-indigo-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Pronunciation (P)</p>
           </div>
 
-          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-yellow-500/50 transition-all">
-            <p className="text-yellow-400 text-3xl mb-2">📝</p>
-            <p className="text-4xl font-bold text-white mb-2">{aiObj.grammar_score || 0}<span className="text-xl text-yellow-400">%</span></p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Grammar</p>
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-teal-500/50 transition-all">
+            <p className="text-teal-500 text-3xl mb-2">💡</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.content_clarity ?? 0}<span className="text-xl text-teal-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Clarity (C)</p>
           </div>
 
-          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-8 text-center hover:border-red-500/50 transition-all">
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-yellow-500/50 transition-all">
+            <p className="text-yellow-400 text-3xl mb-2">📓</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.grammar_score ?? 0}<span className="text-xl text-yellow-400">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Vocabulary (V)</p>
+          </div>
+
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-purple-500/50 transition-all">
+            <p className="text-purple-500 text-3xl mb-2">⏱️</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.pace ?? 0}<span className="text-xl text-purple-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Speech Rate (S)</p>
+          </div>
+
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-pink-500/50 transition-all">
+            <p className="text-pink-500 text-3xl mb-2">🎭</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.expression_score ?? 0}<span className="text-xl text-pink-500">%</span></p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Expression (E)</p>
+          </div>
+
+          <div className="bg-gray-900/50 backdrop-blur-xl border border-gray-800 rounded-3xl p-6 text-center hover:border-red-500/50 transition-all">
             <p className="text-red-500 text-3xl mb-2">🛑</p>
-            <p className="text-4xl font-bold text-white mb-2">{aiObj.filler_words || 0}</p>
-            <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">Filler Words</p>
+            <p className="text-4xl font-bold text-white mb-1">{aiObj.filler_words ?? 0}</p>
+            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Filler Words</p>
           </div>
         </div>
 
