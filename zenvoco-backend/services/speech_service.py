@@ -34,10 +34,15 @@ def _build_local_feedback(transcription: str, reason: str | None = None) -> dict
     avg_sentence_length = word_count / max(len(sentences), 1)
     unique_ratio = (len(set(word.lower() for word in words)) / max(word_count, 1)) if words else 0
 
-    speech_clarity = _clamp(88 - filler_words * 4 - max(avg_sentence_length - 18, 0) * 1.5)
-    grammar_score = _clamp(84 + unique_ratio * 12 - filler_words * 2)
-    confidence_score = _clamp(82 - filler_words * 3 + min(word_count, 120) / 12)
-    pace = _clamp(74 + min(word_count, 140) / 5 - max(avg_sentence_length - 20, 0) * 1.2)
+    F = _clamp(88 - filler_words * 4 - max(avg_sentence_length - 18, 0) * 1.5)
+    P = _clamp(85 - filler_words * 2)
+    C = _clamp(90 - max(avg_sentence_length - 20, 0) * 1.2)
+    V = _clamp(84 + unique_ratio * 12 - filler_words * 2)
+    S = _clamp(74 + min(word_count, 140) / 5 - max(avg_sentence_length - 20, 0) * 1.2)
+    E = _clamp(80 - filler_words * 3)
+
+    ci_val = 0.214 * F + 0.214 * P + 0.214 * C + 0.143 * V + 0.143 * S + 0.071 * E
+    confidence_score = _clamp(ci_val)
 
     if not text or text == "Audio transcription failed.":
         return {
@@ -48,6 +53,9 @@ def _build_local_feedback(transcription: str, reason: str | None = None) -> dict
                 "pace": 0,
                 "grammar_score": 0,
                 "confidence_score": 0,
+                "pronunciation_score": 0,
+                "content_clarity": 0,
+                "expression_score": 0,
                 "feedback_source": "local_fallback",
                 "fallback_reason": reason or "missing_transcription",
             }
@@ -56,11 +64,14 @@ def _build_local_feedback(transcription: str, reason: str | None = None) -> dict
     return {
         "ai_evaluation": {
             "ai_feedback": "Your response is fairly clear. Focus on reducing filler words and speaking with more deliberate pauses to improve confidence.",
-            "speech_clarity": speech_clarity,
+            "speech_clarity": _clamp(F),
             "filler_words": filler_words,
-            "pace": pace,
-            "grammar_score": grammar_score,
+            "pace": _clamp(S),
+            "grammar_score": _clamp(V),
             "confidence_score": confidence_score,
+            "pronunciation_score": _clamp(P),
+            "content_clarity": _clamp(C),
+            "expression_score": _clamp(E),
             "feedback_source": "local_fallback",
             "fallback_reason": reason or "llm_unavailable",
         }
@@ -110,13 +121,15 @@ async def process_generative_feedback(transcription: str) -> dict:
 
     Evaluate based on confidence, fluency, and professional impact.
     
-    Return ONLY a JSON object with these fields:
+    Return ONLY a JSON object with these EXACT fields and numeric types:
     - ai_feedback: (string, exactly two short coaching sentences)
-    - speech_clarity: (int 0-100)
+    - fluency: (int 0-100) -> Smoothness of speech
+    - pronunciation: (int 0-100) -> Accuracy of word pronunciation
+    - clarity: (int 0-100) -> How clearly ideas are expressed
+    - vocabulary: (int 0-100) -> Word variety and richness
+    - speech_rate: (int 0-100) -> Speed of speaking (50 is ideal, but score 0-100 as quality)
+    - expression: (int 0-100) -> Emotion, tone, confidence
     - filler_words: (int, count of words like 'um', 'uh', 'like', 'you know')
-    - pace: (int 0-100, where 50 is ideal)
-    - grammar_score: (int 0-100)
-    - confidence_score: (int 0-100)
     """
 
     try:
@@ -132,13 +145,35 @@ async def process_generative_feedback(transcription: str) -> dict:
             content = content[3:-3].strip()
 
         data = json.loads(content)
-        print("Gemini Evaluation:", data)
+        
+        # Calculate Confidence Index based on the weighted formula
+        F = float(data.get("fluency", 0))
+        P = float(data.get("pronunciation", 0))
+        C = float(data.get("clarity", 0))
+        V = float(data.get("vocabulary", 0))
+        S = float(data.get("speech_rate", 0))
+        E = float(data.get("expression", 0))
+        
+        ci_val = 0.214 * F + 0.214 * P + 0.214 * C + 0.143 * V + 0.143 * S + 0.071 * E
+        
+        # Map back to legacy schema fields for frontend
+        eval_data = {
+            "ai_feedback": data.get("ai_feedback", ""),
+            "speech_clarity": _clamp(F),            # Maps to Fluency on frontend
+            "filler_words": int(data.get("filler_words", 0)),
+            "pace": _clamp(S),                      # Maps to Pace on frontend
+            "grammar_score": _clamp(V),             # Maps to Grammar on frontend
+            "confidence_score": _clamp(ci_val),     # Calculated using the 6 features
+            "pronunciation_score": _clamp(P),
+            "content_clarity": _clamp(C),
+            "expression_score": _clamp(E),
+            "feedback_source": "gemini"
+        }
+        
+        print("Gemini Evaluation:", eval_data)
 
         return {
-            "ai_evaluation": {
-                **data,
-                "feedback_source": "gemini"
-            }
+            "ai_evaluation": eval_data
         }
 
     except Exception as e:

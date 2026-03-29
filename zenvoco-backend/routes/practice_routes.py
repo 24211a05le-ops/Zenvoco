@@ -112,6 +112,10 @@ async def upload_speech_audio(
         "speech_clarity": ai_eval.get("speech_clarity"),
         "pace": ai_eval.get("pace"),
         "filler_words": ai_eval.get("filler_words"),
+        "pronunciation_score": ai_eval.get("pronunciation_score"),
+        "content_clarity": ai_eval.get("content_clarity"),
+        "expression_score": ai_eval.get("expression_score"),
+        "grammar_score": ai_eval.get("grammar_score"),
         "duration": duration,
         "date": datetime.utcnow()
     })
