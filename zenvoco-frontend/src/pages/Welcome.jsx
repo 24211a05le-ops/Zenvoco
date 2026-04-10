@@ -1,7 +1,67 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import API from "../api/api";
 
 function Welcome() {
+  const [stats, setStats] = useState({
+    total_users: 0,
+    total_sessions: 0,
+    avg_confidence_improvement: 0,
+    satisfied_users_percent: 95
+  });
+  const [userData, setUserData] = useState(null);
+  const [feedbacks, setFeedbacks] = useState([]);
+
+  useEffect(() => {
+    const fetchPlatformStats = async () => {
+      try {
+        const response = await API.get("/dashboard/platform/stats");
+        setStats(response.data);
+      } catch (err) {
+        console.error("Error fetching platform stats:", err);
+      }
+    };
+
+    const fetchUserData = async () => {
+      const token = localStorage.getItem("token");
+      if (token && token !== "undefined" && token !== "null") {
+        try {
+          const response = await API.get("/dashboard/user");
+          setUserData(response.data);
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+        }
+      }
+    };
+
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await API.get("/dashboard/feedbacks");
+        setFeedbacks(response.data);
+      } catch (err) {
+        console.error("Error fetching feedbacks:", err);
+      }
+    };
+
+    fetchPlatformStats();
+    fetchUserData();
+    fetchFeedbacks();
+  }, []);
+
+  // Use user's last session or average for mockup if available
+  const mockupData = {
+    clarity: userData?.metrics_preview?.[0]?.speech_clarity || 92,
+    confidence: userData?.metrics_preview?.[0]?.confidence_score || 88,
+    overall: userData?.metrics_preview?.[0]?.confidence_score || 85,
+    fillerWords: userData?.metrics_preview?.[0]?.filler_words_count || 3,
+    pace: userData?.metrics_preview?.[0]?.pace_rating || "PERFECT",
+    feedback: userData?.metrics_preview?.[0]?.ai_feedback || "Good clarity! Try reducing filler words and maintain a steady pace to sound completely authoritative."
+  };
+
+  // Predefined colors for dynamic testimonials
+  const testimonialColors = ["bg-[#0ea5e9]", "bg-[#2dd4bf]", "bg-[#8b5cf6]", "bg-[#f59e0b]", "bg-[#10b981]", "bg-[#ec4899]"];
+
   return (
     <>
       <Navbar />
@@ -90,16 +150,16 @@ function Welcome() {
                     {/* Left: Progress Bars */}
                     <div className="space-y-6">
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
-                        <div className="flex justify-between text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Clarity</span><span className="text-[#2dd4bf]">92%</span></div>
+                        <div className="flex justify-between text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Clarity</span><span className="text-[#2dd4bf]">{mockupData.clarity}%</span></div>
                         <div className="w-full bg-slate-200 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
-                          <div className="bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] h-2.5 rounded-full" style={{ width: '92%' }}></div>
+                          <div className="bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] h-2.5 rounded-full transition-all duration-1000" style={{ width: `${mockupData.clarity}%` }}></div>
                         </div>
                       </div>
                       
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
-                        <div className="flex justify-between text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Confidence</span><span className="text-[#0ea5e9]">88%</span></div>
+                        <div className="flex justify-between text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Confidence</span><span className="text-[#0ea5e9]">{mockupData.confidence}%</span></div>
                         <div className="w-full bg-slate-200 dark:bg-gray-800 rounded-full h-2.5 overflow-hidden">
-                          <div className="bg-gradient-to-r from-blue-500 to-[#0ea5e9] h-2.5 rounded-full" style={{ width: '88%' }}></div>
+                          <div className="bg-gradient-to-r from-blue-500 to-[#0ea5e9] h-2.5 rounded-full transition-all duration-1000" style={{ width: `${mockupData.confidence}%` }}></div>
                         </div>
                       </div>
                     </div>
@@ -117,12 +177,12 @@ function Welcome() {
                     <div className="space-y-6 flex flex-col justify-center">
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
                          <span className="text-slate-800 dark:text-white font-bold text-sm">Pace</span>
-                         <span className="px-3 py-1 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-black rounded-full border border-green-200 dark:border-green-500/30">PERFECT</span>
+                         <span className="px-3 py-1 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-black rounded-full border border-green-200 dark:border-green-500/30 uppercase">{mockupData.pace}</span>
                       </div>
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
                          <span className="text-slate-800 dark:text-white font-bold text-sm">Filler Words</span>
                          <span className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-black text-sm">
-                           3 <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                           {mockupData.fillerWords} <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                          </span>
                       </div>
                     </div>
@@ -137,10 +197,10 @@ function Welcome() {
                        <div className="absolute top-0 right-0 w-20 h-20 bg-[#2dd4bf]/20 dark:bg-[#2dd4bf]/10 rounded-full blur-2xl"></div>
                        <svg className="w-24 h-24 transform -rotate-90">
                           <circle cx="48" cy="48" r="36" stroke="CurrentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-gray-800" />
-                          <circle cx="48" cy="48" r="36" stroke="CurrentColor" strokeWidth="8" fill="transparent" strokeDasharray="226" strokeDashoffset="33.9" className="text-[#2dd4bf] transition-all duration-1000 ease-out" />
+                          <circle cx="48" cy="48" r="36" stroke="CurrentColor" strokeWidth="8" fill="transparent" strokeDasharray="226" strokeDashoffset={226 - (226 * mockupData.overall / 100)} className="text-[#2dd4bf] transition-all duration-1000 ease-out" />
                        </svg>
                        <div className="absolute inset-0 flex items-center justify-center flex-col mt-[-10px]">
-                          <span className="text-2xl font-black text-slate-800 dark:text-white">85</span>
+                          <span className="text-2xl font-black text-slate-800 dark:text-white">{mockupData.overall}</span>
                           <span className="text-[10px] text-slate-500 dark:text-gray-400 tracking-widest font-bold">/100</span>
                        </div>
                        <p className="mt-4 text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest text-center">Overall<br/>Performance</p>
@@ -152,7 +212,7 @@ function Welcome() {
                        <div>
                          <h4 className="text-sm font-black text-[#0ea5e9] mb-2 uppercase tracking-widest">Live AI Feedback</h4>
                          <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed font-medium">
-                           "Good clarity! Try reducing filler words and maintain a steady pace to sound completely authoritative."
+                           "{mockupData.feedback}"
                          </p>
                        </div>
                     </div>
@@ -170,15 +230,15 @@ function Welcome() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-[#0ea5e9]/10">
               <div className="p-4 transform hover:scale-105 transition-transform">
-                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">90%</p>
+                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.avg_confidence_improvement || "90"}%</p>
                 <p className="text-slate-600 dark:text-gray-400 font-bold uppercase tracking-wide">Confidence Improvement</p>
               </div>
               <div className="p-4 transform hover:scale-105 transition-transform">
-                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">500+</p>
+                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.total_sessions || "500"}+</p>
                 <p className="text-slate-600 dark:text-gray-400 font-bold uppercase tracking-wide">Sessions Completed</p>
               </div>
               <div className="p-4 transform hover:scale-105 transition-transform">
-                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">95%</p>
+                <p className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.satisfied_users_percent || "95"}%</p>
                 <p className="text-slate-600 dark:text-gray-400 font-bold uppercase tracking-wide">Positive Feedback</p>
               </div>
             </div>
@@ -206,7 +266,7 @@ function Welcome() {
             <div className="bg-white/70 dark:bg-gray-900 border border-[#0ea5e9]/10 rounded-3xl p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.15)] transition-all flex flex-col justify-center">
               <div className="bg-gradient-to-r from-[#0ea5e9]/10 to-transparent p-6 rounded-2xl border border-[#0ea5e9]/20 shadow-inner">
                  <p className="text-sm font-bold text-[#0ea5e9] uppercase tracking-widest mb-2">Live Insight</p>
-                 <p className="font-medium text-slate-700 dark:text-gray-300">"Your pace was slightly rushed here. Try pausing for effect."</p>
+                 <p className="font-medium text-slate-700 dark:text-gray-300">"{mockupData.feedback}"</p>
               </div>
             </div>
           </div>
@@ -289,7 +349,7 @@ function Welcome() {
                 {[
                   { title: "Build Real Confidence", desc: "Practice consistently to lock in muscle memory without pressure." },
                   { title: "No Fear of Judgment", desc: "Fail safely. Talk to an AI that just wants to see you succeed." },
-                  { title: "Instant Improvement", desc: "Stop wondering what went wrong. See EXACTLY what needs adjusting immediately." },
+                  { title: "Instant Improvement", desc: "See EXACTLY what needs adjusting immediately." },
                   { title: "Designed for Students", desc: "Curated specifically for academic and early-career scenarios." }
                 ].map((b, i) => (
                   <li key={i} className="flex gap-4">
@@ -318,22 +378,39 @@ function Welcome() {
             Trusted by Students <span className="text-[#2dd4bf]">Worldwide</span>
           </h2>
           <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { text: "Helped me crack my viva confidently! I was able to defend my project smoothly without stuttering.", name: "Rahul S.", role: "Engineering Student", initial: "R", color: "bg-[#0ea5e9]" },
-              { text: "The filler word tracking is a game-changer. I never realized how often I said 'like' until Zenvoco caught it.", name: "Sara M.", role: "Business Major", initial: "S", color: "bg-[#2dd4bf]" },
-              { text: "Best platform for interview preps. The STAR method module combined with AI analysis completely rewired how I speak.", name: "David L.", role: "Recent Graduate", initial: "D", color: "bg-[#8b5cf6]" }
-            ].map((t, i) => (
-              <div key={i} className="bg-white/70 dark:bg-gray-900/60 border border-[#0ea5e9]/10 rounded-3xl p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.1)] transition-all">
-                <p className="text-slate-600 dark:text-gray-300 font-medium italic mb-6 leading-relaxed">"{t.text}"</p>
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-full ${t.color} flex items-center justify-center text-white font-black text-xl shadow-inner`}>{t.initial}</div>
-                  <div>
-                    <h4 className="font-black text-[#0f172a] dark:text-white text-sm">{t.name}</h4>
-                    <p className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider">{t.role}</p>
+            {feedbacks.length > 0 ? (
+              feedbacks.map((t, i) => (
+                <div key={i} className="bg-white/70 dark:bg-gray-900/60 border border-[#0ea5e9]/10 rounded-3xl p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.1)] transition-all">
+                  <p className="text-slate-600 dark:text-gray-300 font-medium italic mb-6 leading-relaxed">"{t.comment}"</p>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full ${testimonialColors[i % testimonialColors.length]} flex items-center justify-center text-white font-black text-xl shadow-inner uppercase`}>
+                      {t.name?.charAt(0) || "U"}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-[#0f172a] dark:text-white text-sm">{t.name}</h4>
+                      <p className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider">Zenvoco Member</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              [
+                { text: "Helped me crack my viva confidently! I was able to defend my project smoothly without stuttering.", name: "Rahul S.", role: "Engineering Student", initial: "R", color: "bg-[#0ea5e9]" },
+                { text: "The filler word tracking is a game-changer. I never realized how often I said 'like' until Zenvoco caught it.", name: "Sara M.", role: "Business Major", initial: "S", color: "bg-[#2dd4bf]" },
+                { text: "Best platform for interview preps. The STAR method module combined with AI analysis completely rewired how I speak.", name: "David L.", role: "Recent Graduate", initial: "D", color: "bg-[#8b5cf6]" }
+              ].map((t, i) => (
+                <div key={i} className="bg-white/70 dark:bg-gray-900/60 border border-[#0ea5e9]/10 rounded-3xl p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.1)] transition-all">
+                  <p className="text-slate-600 dark:text-gray-300 font-medium italic mb-6 leading-relaxed">"{t.text}"</p>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-12 h-12 rounded-full ${t.color} flex items-center justify-center text-white font-black text-xl shadow-inner`}>{t.initial}</div>
+                    <div>
+                      <h4 className="font-black text-[#0f172a] dark:text-white text-sm">{t.name}</h4>
+                      <p className="text-slate-500 dark:text-gray-400 text-xs font-bold uppercase tracking-wider">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </section>
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from auth.jwt_handler import get_current_user_id
-from database import users_collection, progress_collection, practice_collection
+from database import users_collection, progress_collection, practice_collection, feedbacks_collection
 from bson import ObjectId
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard Initialization"])
@@ -38,3 +38,58 @@ async def initialize_dashboard_metrics(user_id: str = Depends(get_current_user_i
         "metrics_preview": progress_records,
         "history_preview": session_records
     }
+
+@router.get("/platform/stats")
+async def get_platform_stats():
+    """
+    Returns public aggregate statistics for the landing page.
+    """
+    total_users = await users_collection.count_documents({})
+    total_sessions = await practice_collection.count_documents({})
+    
+    # Calculate average confidence score across all progress records
+    pipeline = [
+        {"$group": {"_id": None, "avg_confidence": {"$avg": "$confidence_score"}}}
+    ]
+    cursor = progress_collection.aggregate(pipeline)
+    result = await cursor.to_list(length=1)
+    
+    avg_confidence = 0
+    if result and result[0].get("avg_confidence") is not None:
+        avg_confidence = round(result[0]["avg_confidence"], 1)
+    
+    return {
+        "total_users": total_users,
+        "total_sessions": total_sessions,
+        "avg_confidence_improvement": avg_confidence,
+        "satisfied_users_percent": await _calculate_satisfaction_percent()
+    }
+
+async def _calculate_satisfaction_percent():
+    """
+    Calculates the satisfaction percentage based on user feedback ratings.
+    """
+    pipeline = [
+        {"$group": {"_id": None, "avg_rating": {"$avg": "$rating"}}}
+    ]
+    cursor = feedbacks_collection.aggregate(pipeline)
+    result = await cursor.to_list(length=1)
+    
+    if result and result[0].get("avg_rating") is not None:
+        # Assuming rating is out of 5, convert to percentage
+        return round((result[0]["avg_rating"] / 5) * 100)
+    
+    return 95 # Fallback to a high baseline if no feedback yet
+
+@router.get("/feedbacks")
+async def get_latest_feedbacks():
+    """
+    Returns the latest 6 feedbacks for the landing page.
+    """
+    cursor = feedbacks_collection.find().sort("created_at", -1).limit(6)
+    feedbacks = await cursor.to_list(length=6)
+    
+    for f in feedbacks:
+        f["_id"] = str(f["_id"])
+        
+    return feedbacks

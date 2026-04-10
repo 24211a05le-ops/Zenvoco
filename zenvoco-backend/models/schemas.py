@@ -48,4 +48,10 @@ class DailyTaskSubmit(BaseModel):
 class ProfileUpdateRequest(BaseModel):
     name: Optional[str] = None
     email: Optional[EmailStr] = None
-    bio: Optional[str] = None
+    password: Optional[str] = None
+    purpose: Optional[str] = None
+    level: Optional[str] = None
+
+class FeedbackCreate(BaseModel):
+    comment: str
+    rating: int = 5

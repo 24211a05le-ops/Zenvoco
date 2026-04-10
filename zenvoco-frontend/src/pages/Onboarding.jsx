@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../api/api";
 
 const Onboarding = () => {
   const [purpose, setPurpose] = useState("");
@@ -12,10 +13,16 @@ const Onboarding = () => {
     if (name) setUserName(name);
   }, []);
 
-  const handleContinue = () => {
-    localStorage.setItem("purpose", purpose);
-    localStorage.setItem("level", level);
-    navigate("/dashboard");
+  const handleContinue = async () => {
+    try {
+      localStorage.setItem("purpose", purpose);
+      localStorage.setItem("level", level);
+      await API.put("/user/profile", { purpose, level });
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Error saving onboarding:", error);
+      navigate("/dashboard");
+    }
   };
 
   const purposes = [
