@@ -150,14 +150,20 @@ function Welcome() {
                     {/* Left: Progress Bars */}
                     <div className="space-y-4 sm:space-y-6">
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
-                        <div className="flex justify-between text-xs sm:text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Clarity</span><span className="text-[#2dd4bf]">{mockupData.clarity}%</span></div>
+                        <div className="flex justify-between text-xs sm:text-sm mb-2 font-bold text-slate-800 dark:text-white">
+                          <span className="whitespace-nowrap">Clarity</span>
+                          <span className="text-[#2dd4bf] whitespace-nowrap">{mockupData.clarity}%</span>
+                        </div>
                         <div className="w-full bg-slate-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
                           <div className="bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] h-2 rounded-full transition-all duration-1000" style={{ width: `${mockupData.clarity}%` }}></div>
                         </div>
                       </div>
                       
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
-                        <div className="flex justify-between text-xs sm:text-sm mb-2 font-bold text-slate-800 dark:text-white"><span>Confidence</span><span className="text-[#0ea5e9]">{mockupData.confidence}%</span></div>
+                        <div className="flex justify-between text-xs sm:text-sm mb-2 font-bold text-slate-800 dark:text-white">
+                          <span className="whitespace-nowrap">Confidence</span>
+                          <span className="text-[#0ea5e9] whitespace-nowrap">{mockupData.confidence}%</span>
+                        </div>
                         <div className="w-full bg-slate-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden">
                           <div className="bg-gradient-to-r from-blue-500 to-[#0ea5e9] h-2 rounded-full transition-all duration-1000" style={{ width: `${mockupData.confidence}%` }}></div>
                         </div>
@@ -195,13 +201,13 @@ function Welcome() {
                     {/* Score Circle */}
                     <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-md flex flex-col items-center justify-center relative hover:bg-slate-100 dark:hover:bg-white/10 transition-colors py-8">
                        <div className="absolute top-0 right-0 w-20 h-20 bg-[#2dd4bf]/20 dark:bg-[#2dd4bf]/10 rounded-full blur-2xl"></div>
-                       <svg className="w-20 h-20 sm:w-24 sm:h-24 transform -rotate-90">
-                          <circle cx="48" cy="48" r="36" stroke="CurrentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-gray-800" />
-                          <circle cx="48" cy="48" r="36" stroke="CurrentColor" strokeWidth="8" fill="transparent" strokeDasharray="226" strokeDashoffset={226 - (226 * mockupData.overall / 100)} className="text-[#2dd4bf] transition-all duration-1000 ease-out" />
+                       <svg className="w-24 h-24 sm:w-28 sm:h-28 transform -rotate-90" viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-gray-800" />
+                          <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="264" strokeDashoffset={264 - (264 * mockupData.overall / 100)} className="text-[#2dd4bf] transition-all duration-1000 ease-out" strokeLinecap="round" />
                        </svg>
-                       <div className="absolute inset-0 flex items-center justify-center flex-col mt-[-10px]">
-                          <span className="text-xl sm:text-2xl font-black text-slate-800 dark:text-white">{mockupData.overall}</span>
-                          <span className="text-[10px] text-slate-500 dark:text-gray-400 tracking-widest font-bold">/100</span>
+                       <div className="absolute inset-0 flex items-center justify-center flex-col pb-4">
+                          <span className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{mockupData.overall}</span>
+                          <span className="text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 tracking-widest font-bold">/100</span>
                        </div>
                        <p className="mt-4 text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest text-center">Overall<br/>Performance</p>
                     </div>
