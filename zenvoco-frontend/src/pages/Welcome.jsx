@@ -49,14 +49,14 @@ function Welcome() {
     fetchFeedbacks();
   }, []);
 
-  // Use user's last session or average for mockup if available
+  // Keep mockup data static regardless of login status for consistent landing page aesthetic
   const mockupData = {
-    clarity: userData?.metrics_preview?.[0]?.speech_clarity || 92,
-    confidence: userData?.metrics_preview?.[0]?.confidence_score || 88,
-    overall: userData?.metrics_preview?.[0]?.confidence_score || 85,
-    fillerWords: userData?.metrics_preview?.[0]?.filler_words_count || 3,
-    pace: userData?.metrics_preview?.[0]?.pace_rating || "PERFECT",
-    feedback: userData?.metrics_preview?.[0]?.ai_feedback || "Good clarity! Try reducing filler words and maintain a steady pace to sound completely authoritative."
+    clarity: 92,
+    confidence: 88,
+    overall: 85,
+    fillerWords: 3,
+    pace: "PERFECT",
+    feedback: "Good clarity! Try reducing filler words and maintain a steady pace to sound completely authoritative."
   };
 
   // Predefined colors for dynamic testimonials
