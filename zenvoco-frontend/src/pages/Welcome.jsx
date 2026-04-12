@@ -74,7 +74,6 @@ function Welcome() {
       setDisplayStats({
         total_users: Math.floor(stats.total_users * easeOut),
         total_sessions: Math.floor(stats.total_sessions * easeOut),
-        avg_confidence_improvement: (stats.avg_confidence_improvement * easeOut).toFixed(1),
         satisfied_users_percent: Math.floor(stats.satisfied_users_percent * easeOut)
       });
 
@@ -278,7 +277,7 @@ function Welcome() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 text-center md:divide-x divide-[#0ea5e9]/10">
               <div className="py-6 sm:py-8 md:p-4 transform hover:scale-105 transition-transform border-b md:border-b-0 border-[#0ea5e9]/5">
-                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{displayStats.avg_confidence_improvement}%</p>
+                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">93%</p>
                 <p className="text-slate-600 dark:text-gray-400 text-xs sm:text-sm font-bold uppercase tracking-wide">Confidence Improvement</p>
               </div>
               <div className="py-6 sm:py-8 md:p-4 transform hover:scale-105 transition-transform border-b md:border-b-0 border-[#0ea5e9]/5">
