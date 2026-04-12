@@ -67,19 +67,15 @@ async def get_platform_stats():
 
 async def _calculate_satisfaction_percent():
     """
-    Calculates the satisfaction percentage based on user feedback ratings.
+    Calculates the satisfaction percentage based on the ratio of positive reviews (4-5 stars).
     """
-    pipeline = [
-        {"$group": {"_id": None, "avg_rating": {"$avg": "$rating"}}}
-    ]
-    cursor = feedbacks_collection.aggregate(pipeline)
-    result = await cursor.to_list(length=1)
+    total_feedbacks = await feedbacks_collection.count_documents({})
+    if total_feedbacks == 0:
+        return 0
+        
+    positive_feedbacks = await feedbacks_collection.count_documents({"rating": {"$gte": 4}})
     
-    if result and result[0].get("avg_rating") is not None:
-        # Assuming rating is out of 5, convert to percentage
-        return round((result[0]["avg_rating"] / 5) * 100)
-    
-    return 95 # Fallback to a high baseline if no feedback yet
+    return round((positive_feedbacks / total_feedbacks) * 100)
 
 @router.get("/feedbacks")
 async def get_latest_feedbacks():

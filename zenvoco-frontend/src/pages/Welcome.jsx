@@ -8,21 +8,27 @@ function Welcome() {
     total_users: 0,
     total_sessions: 0,
     avg_confidence_improvement: 0,
-    satisfied_users_percent: 95
+    satisfied_users_percent: 0
+  });
+  const [displayStats, setDisplayStats] = useState({
+    total_users: 0,
+    total_sessions: 0,
+    avg_confidence_improvement: 0,
+    satisfied_users_percent: 0
   });
   const [userData, setUserData] = useState(null);
   const [feedbacks, setFeedbacks] = useState([]);
 
-  useEffect(() => {
-    const fetchPlatformStats = async () => {
-      try {
-        const response = await API.get("/dashboard/platform/stats");
-        setStats(response.data);
-      } catch (err) {
-        console.error("Error fetching platform stats:", err);
-      }
-    };
+  const fetchPlatformStats = async () => {
+    try {
+      const response = await API.get("/dashboard/platform/stats");
+      setStats(response.data);
+    } catch (err) {
+      console.error("Error fetching platform stats:", err);
+    }
+  };
 
+  useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("token");
       if (token && token !== "undefined" && token !== "null") {
@@ -47,7 +53,40 @@ function Welcome() {
     fetchPlatformStats();
     fetchUserData();
     fetchFeedbacks();
+
+    // Poll for platform stats every 30 seconds to keep it dynamic
+    const interval = setInterval(fetchPlatformStats, 30000);
+    return () => clearInterval(interval);
   }, []);
+
+  // Animate numbers when stats change
+  useEffect(() => {
+    const duration = 2000; // 2 seconds animation
+    const frameRate = 1000 / 60;
+    const totalFrames = duration / frameRate;
+
+    let frame = 0;
+    const animate = () => {
+      frame++;
+      const progress = frame / totalFrames;
+      const easeOut = 1 - Math.pow(1 - progress, 3); // Cubic ease out
+
+      setDisplayStats({
+        total_users: Math.floor(stats.total_users * easeOut),
+        total_sessions: Math.floor(stats.total_sessions * easeOut),
+        avg_confidence_improvement: (stats.avg_confidence_improvement * easeOut).toFixed(1),
+        satisfied_users_percent: Math.floor(stats.satisfied_users_percent * easeOut)
+      });
+
+      if (frame < totalFrames) {
+        requestAnimationFrame(animate);
+      } else {
+        setDisplayStats(stats);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [stats]);
 
   // Keep mockup data static regardless of login status for consistent landing page aesthetic
   const mockupData = {
@@ -74,18 +113,21 @@ function Welcome() {
 
           <div className="relative z-10 max-w-6xl mx-auto flex flex-col items-center w-full">
             <div className="inline-block px-4 py-1.5 sm:px-5 sm:py-2 bg-[#e0eff8]/60 dark:bg-gray-800/60 rounded-full text-[#0ea5e9] dark:text-blue-400 text-[10px] sm:text-xs md:text-sm font-bold tracking-widest uppercase mb-8 sm:mb-10 backdrop-blur-md shadow-sm">
-              ✨ The New Standard for Communication
+              ✨ Join {displayStats.total_users}+ Students Mastering Communication
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-[#0f172a] dark:text-white px-2">
-              Master the Art of <br className="hidden sm:block" />
+              {userData ? `Welcome back, ${userData.user_profile.name.split(' ')[0]}` : "Master the Art of"} <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf]">
-                Fearless Communication
+                {userData ? "Continue Your Journey" : "Fearless Communication"}
               </span>
             </h1>
 
             <p className="text-slate-600 dark:text-gray-300 text-base sm:text-lg md:text-2xl md:leading-relaxed mb-10 md:mb-12 max-w-3xl px-4 font-medium">
-              Zenvoco is an AI-powered system designed for students to conquer anxiety, structure their thoughts, and speak with absolute confidence.
+              {userData 
+                ? "You're doing great! Jump back into your sessions and keep building that unshakeable confidence."
+                : "Zenvoco is an AI-powered system designed for students to conquer anxiety, structure their thoughts, and speak with absolute confidence."
+              }
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center w-full sm:w-auto px-4 mb-20">
@@ -94,7 +136,7 @@ function Welcome() {
                   to="/dashboard"
                   className="w-full sm:w-auto bg-[#0284c7] text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-[#0369a1] shadow-[0_8px_30px_rgb(2,132,199,0.25)] hover:shadow-[0_8px_30px_rgb(2,132,199,0.4)] transition-all duration-300 transform hover:-translate-y-1 text-center"
                 >
-                  Go to Dashboard
+                  Return to Dashboard
                 </Link>
               ) : (
                 <>
@@ -236,15 +278,15 @@ function Welcome() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-0 text-center md:divide-x divide-[#0ea5e9]/10">
               <div className="py-6 sm:py-8 md:p-4 transform hover:scale-105 transition-transform border-b md:border-b-0 border-[#0ea5e9]/5">
-                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.avg_confidence_improvement || "90"}%</p>
+                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{displayStats.avg_confidence_improvement}%</p>
                 <p className="text-slate-600 dark:text-gray-400 text-xs sm:text-sm font-bold uppercase tracking-wide">Confidence Improvement</p>
               </div>
               <div className="py-6 sm:py-8 md:p-4 transform hover:scale-105 transition-transform border-b md:border-b-0 border-[#0ea5e9]/5">
-                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.total_sessions || "500"}+</p>
+                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{displayStats.total_sessions}+</p>
                 <p className="text-slate-600 dark:text-gray-400 text-xs sm:text-sm font-bold uppercase tracking-wide">Sessions Completed</p>
               </div>
               <div className="py-6 sm:py-8 md:p-4 transform hover:scale-105 transition-transform">
-                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{stats.satisfied_users_percent || "95"}%</p>
+                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] mb-2">{displayStats.satisfied_users_percent}%</p>
                 <p className="text-slate-600 dark:text-gray-400 text-xs sm:text-sm font-bold uppercase tracking-wide">Positive Feedback</p>
               </div>
             </div>
