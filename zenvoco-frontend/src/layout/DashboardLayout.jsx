@@ -30,7 +30,10 @@ function DashboardLayout({ children }) {
 
       {/* Mobile Header (Only on small screens) */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white/70 dark:bg-gray-900/80 backdrop-blur-xl border-b border-[#0ea5e9]/10 dark:border-gray-800 p-4 flex items-center justify-between">
-        <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight">Zenvoco</h1>
+        <Link to="/" className="flex items-center gap-1.5">
+          <img src="/logo.png" alt="Logo" className="h-7 w-auto object-contain" />
+          <h1 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight">Zenvoco</h1>
+        </Link>
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <button 
@@ -53,9 +56,12 @@ function DashboardLayout({ children }) {
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-[70] w-64 bg-white/60 dark:bg-gray-900/50 backdrop-blur-xl border-r border-[#0ea5e9]/10 dark:border-gray-800 p-6 flex flex-col transition-transform duration-300 lg:relative lg:translate-x-0 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="lg:flex hidden justify-between items-center mb-8">
-          <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight">
-            Zenvoco
-          </h1>
+          <Link to="/" className="flex items-center gap-1.5 group">
+            <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
+            <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight group-hover:opacity-80 transition-opacity">
+              Zenvoco
+            </h1>
+          </Link>
           <ThemeToggle />
         </div>
         <div className="lg:hidden h-16" /> {/* Spacer for mobile */}
