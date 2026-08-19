@@ -105,7 +105,7 @@ function Welcome() {
       <Navbar />
 
       <div className="bg-gradient-to-br from-[#e8f4f8] via-[#eaf6fc] to-[#d6eff8] dark:from-gray-900 dark:via-gray-950 dark:to-black text-slate-900 dark:text-white selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-300 font-sans">
-        
+
         {/* 1. HERO SECTION */}
         <section id="home" className="relative h-auto min-h-screen flex flex-col justify-center items-center text-center px-4 sm:px-6 pt-32 pb-20 overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/60 via-transparent to-transparent pointer-events-none -z-10"></div>
@@ -116,16 +116,16 @@ function Welcome() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-[-0.04em] leading-[1.1] mb-8 text-[#0f172a] dark:text-white px-2">
-              {userData ? `Welcome back, ${userData.user_profile.name.split(' ')[0]}` : "Master the Art of"} <br className="hidden sm:block" />
+              {userData ? `Welcome back, ${userData.user_profile.name.split(' ')[0]}` : "Build Communication Confidence"} <br className="hidden sm:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf]">
                 {userData ? "Continue Your Journey" : "Fearless Communication"}
               </span>
             </h1>
 
             <p className="text-slate-600 dark:text-gray-300 text-base sm:text-lg md:text-2xl md:leading-relaxed mb-10 md:mb-12 max-w-3xl px-4 font-medium">
-              {userData 
+              {userData
                 ? "You're doing great! Jump back into your sessions and keep building that unshakeable confidence."
-                : "Zenvoco is an AI-powered system designed for students to conquer anxiety, structure their thoughts, and speak with absolute confidence."
+                : "Zenvoco is an AI communication coach for students, helping you improve English speaking, public speaking, interviews, presentations, and viva performance with personalized feedback."
               }
             </p>
 
@@ -158,9 +158,9 @@ function Welcome() {
             {/* Illustration / Mockup Area */}
             <div className="w-full max-w-5xl mx-auto relative group perspective-[1000px] px-2 sm:px-4">
               <div className="absolute inset-0 bg-gradient-to-t from-[#eaf6fc] dark:from-gray-950 via-transparent to-transparent z-10 pointer-events-none translate-y-[60%]"></div>
-              
+
               <div className="bg-white/80 dark:bg-gradient-to-br dark:from-[#0f172a] dark:to-[#020617] border border-[#0ea5e9]/20 rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl transition-all duration-700 hover:rotate-x-1 relative overflow-hidden backdrop-blur-3xl">
-                
+
                 {/* Glowing Background Elements */}
                 <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-[#0ea5e9]/10 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none"></div>
 
@@ -172,11 +172,11 @@ function Welcome() {
                 </div>
 
                 <div className="pt-8 sm:pt-10 pb-4 flex flex-col items-center relative z-10">
-                  
+
                   {/* Top: Mic & Title */}
                   <div className="flex flex-col items-center mb-8 sm:mb-12 relative">
                     <div className="absolute inset-0 flex items-center justify-center">
-                       <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#0ea5e9]/20 rounded-full animate-ping opacity-75"></div>
+                      <div className="w-16 h-16 sm:w-24 sm:h-24 bg-[#0ea5e9]/20 rounded-full animate-ping opacity-75"></div>
                     </div>
                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#0ea5e9] to-[#2dd4bf] rounded-full flex items-center justify-center shadow-[0_0_30px_rgb(14,165,233,0.4)] relative z-10 mb-4">
                       <span className="text-3xl sm:text-4xl text-white drop-shadow-md">🎤</span>
@@ -187,7 +187,7 @@ function Welcome() {
 
                   {/* Middle: Metrics Grid & Waveform */}
                   <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10 px-2">
-                    
+
                     {/* Left: Progress Bars */}
                     <div className="space-y-4 sm:space-y-6">
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
@@ -199,7 +199,7 @@ function Welcome() {
                           <div className="bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] h-2 rounded-full transition-all duration-1000" style={{ width: `${mockupData.clarity}%` }}></div>
                         </div>
                       </div>
-                      
+
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm backdrop-blur-md">
                         <div className="flex justify-between text-xs sm:text-sm mb-2 font-bold text-slate-800 dark:text-white">
                           <span className="whitespace-nowrap">Confidence</span>
@@ -213,24 +213,24 @@ function Welcome() {
 
                     {/* Center: Waveform */}
                     <div className="hidden md:flex flex-col justify-center items-center h-full min-h-[100px]">
-                       <div className="flex items-end justify-center gap-1.5 h-16 sm:h-24 w-full">
-                          {[40, 70, 45, 90, 60, 85, 30, 75, 50, 95, 65, 40].map((h, i) => (
-                            <div key={i} className="w-1.5 sm:w-2 rounded-full bg-gradient-to-t from-[#0ea5e9] to-[#2dd4bf] animate-[pulse_1s_ease-in-out_infinite]" style={{ height: `${h}%`, animationDelay: `${i * 0.1}s` }}></div>
-                          ))}
-                       </div>
+                      <div className="flex items-end justify-center gap-1.5 h-16 sm:h-24 w-full">
+                        {[40, 70, 45, 90, 60, 85, 30, 75, 50, 95, 65, 40].map((h, i) => (
+                          <div key={i} className="w-1.5 sm:w-2 rounded-full bg-gradient-to-t from-[#0ea5e9] to-[#2dd4bf] animate-[pulse_1s_ease-in-out_infinite]" style={{ height: `${h}%`, animationDelay: `${i * 0.1}s` }}></div>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Right: Badges */}
                     <div className="space-y-4 sm:space-y-6 flex flex-col justify-center">
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
-                         <span className="text-slate-800 dark:text-white font-bold text-xs sm:text-sm">Pace</span>
-                         <span className="px-2.5 py-1 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-[10px] sm:text-xs font-black rounded-full border border-green-200 dark:border-green-500/30 uppercase">{mockupData.pace}</span>
+                        <span className="text-slate-800 dark:text-white font-bold text-xs sm:text-sm">Pace</span>
+                        <span className="px-2.5 py-1 bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-[10px] sm:text-xs font-black rounded-full border border-green-200 dark:border-green-500/30 uppercase">{mockupData.pace}</span>
                       </div>
                       <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-4 sm:p-5 shadow-sm backdrop-blur-md flex items-center justify-between">
-                         <span className="text-slate-800 dark:text-white font-bold text-xs sm:text-sm">Filler Words</span>
-                         <span className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-black text-xs sm:text-sm">
-                           {mockupData.fillerWords} <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-500 animate-pulse"></span>
-                         </span>
+                        <span className="text-slate-800 dark:text-white font-bold text-xs sm:text-sm">Filler Words</span>
+                        <span className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 font-black text-xs sm:text-sm">
+                          {mockupData.fillerWords} <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+                        </span>
                       </div>
                     </div>
 
@@ -238,30 +238,30 @@ function Welcome() {
 
                   {/* Bottom: Feedback & Score */}
                   <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6 sm:px-2">
-                    
+
                     {/* Score Circle */}
                     <div className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-md flex flex-col items-center justify-center relative hover:bg-slate-100 dark:hover:bg-white/10 transition-colors py-8">
-                       <div className="absolute top-0 right-0 w-20 h-20 bg-[#2dd4bf]/20 dark:bg-[#2dd4bf]/10 rounded-full blur-2xl"></div>
-                       <svg className="w-24 h-24 sm:w-28 sm:h-28 transform -rotate-90" viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-gray-800" />
-                          <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="264" strokeDashoffset={264 - (264 * mockupData.overall / 100)} className="text-[#2dd4bf] transition-all duration-1000 ease-out" strokeLinecap="round" />
-                       </svg>
-                       <div className="absolute inset-0 flex items-center justify-center flex-col pb-4">
-                          <span className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{mockupData.overall}</span>
-                          <span className="text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 tracking-widest font-bold">/100</span>
-                       </div>
-                       <p className="mt-4 text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest text-center">Overall<br/>Performance</p>
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-[#2dd4bf]/20 dark:bg-[#2dd4bf]/10 rounded-full blur-2xl"></div>
+                      <svg className="w-24 h-24 sm:w-28 sm:h-28 transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-gray-800" />
+                        <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray="264" strokeDashoffset={264 - (264 * mockupData.overall / 100)} className="text-[#2dd4bf] transition-all duration-1000 ease-out" strokeLinecap="round" />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center flex-col pb-4">
+                        <span className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{mockupData.overall}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-500 dark:text-gray-400 tracking-widest font-bold">/100</span>
+                      </div>
+                      <p className="mt-4 text-[10px] sm:text-xs font-bold text-slate-500 dark:text-slate-300 uppercase tracking-widest text-center">Overall<br />Performance</p>
                     </div>
 
                     {/* AI Feedback */}
                     <div className="md:col-span-2 bg-gradient-to-r from-slate-50 to-white dark:from-white/10 dark:to-white/5 border border-slate-200 dark:border-white/10 rounded-2xl p-6 shadow-sm backdrop-blur-md flex flex-col sm:flex-row items-center sm:items-start gap-4 hover:border-[#0ea5e9]/50 transition-colors">
-                       <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center text-2xl shrink-0 border border-blue-200 dark:border-blue-500/30">🤖</div>
-                       <div className="text-center sm:text-left">
-                         <h4 className="text-xs sm:text-sm font-black text-[#0ea5e9] mb-2 uppercase tracking-widest">Live AI Feedback</h4>
-                         <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed font-medium">
-                           "{mockupData.feedback}"
-                         </p>
-                       </div>
+                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-xl flex items-center justify-center text-2xl shrink-0 border border-blue-200 dark:border-blue-500/30">🤖</div>
+                      <div className="text-center sm:text-left">
+                        <h4 className="text-xs sm:text-sm font-black text-[#0ea5e9] mb-2 uppercase tracking-widest">Live AI Feedback</h4>
+                        <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed font-medium">
+                          "{mockupData.feedback}"
+                        </p>
+                      </div>
                     </div>
 
                   </div>
@@ -298,7 +298,7 @@ function Welcome() {
             See Zenvoco in <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf]">Action</span>
           </h2>
           <p className="text-slate-600 dark:text-gray-400 mb-12 sm:mb-16 max-w-2xl text-base sm:text-lg font-medium">Experience real-time AI feedback that guides your tone, pace, and delivery as you speak.</p>
-          
+
           <div className="max-w-5xl w-full grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             <div className="bg-white/70 dark:bg-gray-900 border border-[#0ea5e9]/10 rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.15)] transition-all">
               <div className="text-3xl sm:text-4xl mb-4">🏆</div>
@@ -312,8 +312,8 @@ function Welcome() {
             </div>
             <div className="bg-white/70 dark:bg-gray-900 border border-[#0ea5e9]/10 rounded-3xl p-6 sm:p-8 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.15)] transition-all flex flex-col justify-center">
               <div className="bg-gradient-to-r from-[#0ea5e9]/10 to-transparent p-6 rounded-2xl border border-[#0ea5e9]/20 shadow-inner">
-                 <p className="text-xs sm:text-sm font-bold text-[#0ea5e9] uppercase tracking-widest mb-2">Live Insight</p>
-                 <p className="font-medium text-slate-700 dark:text-gray-300 text-xs sm:text-sm">"{mockupData.feedback}"</p>
+                <p className="text-xs sm:text-sm font-bold text-[#0ea5e9] uppercase tracking-widest mb-2">Live Insight</p>
+                <p className="font-medium text-slate-700 dark:text-gray-300 text-xs sm:text-sm">"{mockupData.feedback}"</p>
               </div>
             </div>
           </div>
@@ -498,45 +498,45 @@ function Welcome() {
 
         {/* 10. FINAL CTA SECTION */}
         <section className="py-24 sm:py-32 relative overflow-hidden flex flex-col justify-center items-center px-6 text-center border-t border-[#0ea5e9]/10 bg-gradient-to-b from-transparent to-[#e8f4f8] dark:to-gray-950">
-           <div className="absolute inset-0 bg-[#0ea5e9]/5 rounded-full blur-[100px] scale-150 pointer-events-none -z-10"></div>
-           <h2 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-[-0.03em] leading-tight mb-8 text-[#0f172a] dark:text-white">
-              Ready to Speak with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf]">Confidence?</span>
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 w-full sm:w-auto">
-               <Link
-                    to="/register"
-                    className="w-full sm:w-auto bg-[#0284c7] text-white px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg hover:bg-[#0369a1] shadow-[0_8px_30px_rgb(2,132,199,0.3)] hover:shadow-[0_8px_30px_rgb(2,132,199,0.5)] transition-all duration-300 transform hover:-translate-y-1 text-center"
-                  >
-                    Start Training Now
-                  </Link>
-                  <Link
-                    to="#demo"
-                    className="w-full sm:w-auto bg-white/80 dark:bg-gray-800/90 backdrop-blur-md border border-[#0ea5e9]/20 px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg text-slate-800 dark:text-white hover:bg-white dark:hover:bg-gray-700 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.15)] transition-all duration-300 transform hover:-translate-y-1 text-center"
-                  >
-                    Try Demo
-                  </Link>
-            </div>
+          <div className="absolute inset-0 bg-[#0ea5e9]/5 rounded-full blur-[100px] scale-150 pointer-events-none -z-10"></div>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black tracking-[-0.03em] leading-tight mb-8 text-[#0f172a] dark:text-white">
+            Ready to Speak with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf]">Confidence?</span>
+          </h2>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 w-full sm:w-auto">
+            <Link
+              to="/register"
+              className="w-full sm:w-auto bg-[#0284c7] text-white px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg hover:bg-[#0369a1] shadow-[0_8px_30px_rgb(2,132,199,0.3)] hover:shadow-[0_8px_30px_rgb(2,132,199,0.5)] transition-all duration-300 transform hover:-translate-y-1 text-center"
+            >
+              Start Training Now
+            </Link>
+            <Link
+              to="#demo"
+              className="w-full sm:w-auto bg-white/80 dark:bg-gray-800/90 backdrop-blur-md border border-[#0ea5e9]/20 px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg text-slate-800 dark:text-white hover:bg-white dark:hover:bg-gray-700 shadow-sm hover:shadow-[0_8px_30px_rgb(14,165,233,0.15)] transition-all duration-300 transform hover:-translate-y-1 text-center"
+            >
+              Try Demo
+            </Link>
+          </div>
         </section>
 
         {/* 11. FOOTER */}
         <footer className="border-t border-[#0ea5e9]/10 dark:border-gray-800 py-10 sm:py-12 px-6 bg-[#eaf6fc]/80 dark:bg-black transition-colors duration-300">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8 md:gap-6 text-center md:text-left">
-             <div className="mb-4 md:mb-0">
-               <span className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight">Zenvoco</span>
-               <p className="text-slate-500 dark:text-gray-500 font-bold text-xs sm:text-sm mt-1">Master the art of speaking.</p>
-             </div>
-             <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-xs sm:text-sm font-bold text-slate-600 dark:text-gray-400">
-               <a href="#about" className="hover:text-[#0ea5e9] transition-colors">About</a>
-               <a href="#home" className="hover:text-[#0ea5e9] transition-colors">Contact</a>
-               <a href="#home" className="hover:text-[#0ea5e9] transition-colors">Privacy Policy</a>
-             </div>
-             <div className="flex gap-4">
-                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-400 flex items-center justify-center font-bold hover:bg-[#0ea5e9] hover:text-white transition-all cursor-pointer">X</div>
-                 <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-400 flex items-center justify-center font-bold hover:bg-[#0ea5e9] hover:text-white transition-all cursor-pointer">In</div>
-             </div>
+            <div className="mb-4 md:mb-0">
+              <span className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#0ea5e9] to-[#2dd4bf] tracking-tight">Zenvoco</span>
+              <p className="text-slate-500 dark:text-gray-500 font-bold text-xs sm:text-sm mt-1">Master the art of speaking.</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-8 text-xs sm:text-sm font-bold text-slate-600 dark:text-gray-400">
+              <a href="#about" className="hover:text-[#0ea5e9] transition-colors">About</a>
+              <a href="#home" className="hover:text-[#0ea5e9] transition-colors">Contact</a>
+              <a href="#home" className="hover:text-[#0ea5e9] transition-colors">Privacy Policy</a>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-400 flex items-center justify-center font-bold hover:bg-[#0ea5e9] hover:text-white transition-all cursor-pointer">X</div>
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-400 flex items-center justify-center font-bold hover:bg-[#0ea5e9] hover:text-white transition-all cursor-pointer">In</div>
+            </div>
           </div>
           <div className="max-w-6xl mx-auto text-center border-t border-[#0ea5e9]/10 dark:border-gray-800 mt-8 pt-8 px-4">
-             <p className="font-bold text-slate-400 text-[10px] sm:text-xs tracking-widest uppercase leading-loose">© 2026 Zenvoco. Master Communication. Conquer Anxiety. <br className="sm:hidden" /> All Rights Reserved.</p>
+            <p className="font-bold text-slate-400 text-[10px] sm:text-xs tracking-widest uppercase leading-loose">© 2026 Zenvoco. Master Communication. Conquer Anxiety. <br className="sm:hidden" /> All Rights Reserved.</p>
           </div>
         </footer>
 

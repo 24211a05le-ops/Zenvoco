@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /onboarding
+Disallow: /dashboard
+Disallow: /practice
+Disallow: /progress
+Disallow: /profile
+Disallow: /result
+Disallow: /learn
+Disallow: /listen
+Disallow: /daily-task
+Disallow: /viva
+Disallow: /checkin
+
+Sitemap: https://zenvoco.vercel.app/sitemap.xml
